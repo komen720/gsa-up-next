@@ -6,6 +6,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {CalendarService} from './calendar.service';
+import {ResultsService} from './results.service';
 import {TimesComponent} from './times/times.component';
 
 @NgModule({
@@ -21,6 +22,7 @@ import {TimesComponent} from './times/times.component';
   ],
   providers: [
     CalendarService,
+    ResultsService,
   ],
   bootstrap: [AppComponent]
 })

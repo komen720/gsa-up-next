@@ -7,6 +7,8 @@ import {interval} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 
 import {CalendarEvent, CalendarService} from '../calendar.service';
+import {ResultsService} from '../results.service';
+import {Results} from '../results.model';
 
 enum FromNowStatus {
   PAST,
@@ -25,6 +27,7 @@ interface EventStatus {
   styleUrls: ['times.component.scss'],
 })
 export class TimesComponent implements OnInit {
+  resultses: Results[] = [];
   events: CalendarEvent[] = [];
   eventStatus: Map<CalendarEvent, EventStatus> = new Map();
 
@@ -34,6 +37,7 @@ export class TimesComponent implements OnInit {
   constructor(
       private readonly route: ActivatedRoute,
       private readonly calendarService: CalendarService,
+      private readonly resultsService: ResultsService,
   ) {}
 
   ngOnInit() {
@@ -45,6 +49,25 @@ export class TimesComponent implements OnInit {
           this.events = res;
           this.updateStatus();
         });
+        
+    interval(5000).subscribe(() => {
+      this.route.paramMap
+        .pipe(switchMap(
+            (params: ParamMap) =>
+                this.resultsService.getResults()))
+        .subscribe(res => {
+          this.resultses = res;
+          this.updateStatus();
+        });
+      var thisresultses = this.resultses;
+      this.events.forEach(function(ev) {
+        thisresultses.forEach(function(res) {
+          if (res.from == ev.summary) {
+            ev.summary = res.to;
+          };
+        });
+      });
+    });
 
     interval(1000).subscribe(() => {
       this.updateStatus();
